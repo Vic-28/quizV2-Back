@@ -17,5 +17,5 @@ public class CategoriaResponse {
     private String nombre;
     private String descripcion;
 
-    private List<PreguntaResponse> preguntasList;
+    private List<Long> preguntasIds;
 }
