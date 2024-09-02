@@ -1,8 +1,10 @@
 package com.example.quizv2.Services.Pregunta;
 
+import com.example.quizv2.Models.Categoria.CategoriaResponse;
 import com.example.quizv2.Models.Pregunta.Pregunta;
 import com.example.quizv2.Models.Pregunta.PreguntaRequest;
 import com.example.quizv2.Models.Pregunta.PreguntaResponse;
+import com.example.quizv2.Models.Respuesta.RespuestaResponse;
 import com.example.quizv2.Repositories.Pregunta.PreguntaRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,7 +24,21 @@ public class PreguntaService {
     public List<PreguntaResponse> findAllPreguntas() {
         List<Pregunta> preguntas = preguntaRepository.findAll();
         return preguntas.stream()
-                .map(pregunta -> modelMapper.map(pregunta, PreguntaResponse.class))
+                .map(pregunta -> {
+                    PreguntaResponse response = modelMapper.map(pregunta, PreguntaResponse.class);
+
+                    response.setRespuestaResponseList(pregunta.getRespuestas().stream()
+                            .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
+                            .collect(Collectors.toList()));
+
+                    if (pregunta.getCategoria() != null) {
+                        response.setCategoria(modelMapper.map(pregunta.getCategoria(), CategoriaResponse.class));
+                    } else {
+                        response.setCategoria(null);
+                    }
+
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 

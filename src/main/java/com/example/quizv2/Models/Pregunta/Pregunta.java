@@ -26,7 +26,7 @@ public class Pregunta {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "pregunta", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Respuesta> respuestaList;
+    @OneToMany(mappedBy = "pregunta", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Respuesta> respuestas;
 
 }

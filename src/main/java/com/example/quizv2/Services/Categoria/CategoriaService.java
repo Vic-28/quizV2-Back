@@ -3,6 +3,7 @@ package com.example.quizv2.Services.Categoria;
 import com.example.quizv2.Models.Categoria.Categoria;
 import com.example.quizv2.Models.Categoria.CategoriaRequest;
 import com.example.quizv2.Models.Categoria.CategoriaResponse;
+import com.example.quizv2.Models.Pregunta.PreguntaResponse;
 import com.example.quizv2.Repositories.Categoria.CategoriaRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,18 +19,27 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final ModelMapper modelMapper;
 
-    public List<CategoriaResponse> findAllCategorias()
-    {
+    public List<CategoriaResponse> findAllCategorias() {
         List<Categoria> categorias = categoriaRepository.findAll();
         return categorias.stream()
-                .map(categoria -> modelMapper.map(categoria, CategoriaResponse.class))
+                .map(categoria -> {
+                    CategoriaResponse response = modelMapper.map(categoria, CategoriaResponse.class);
+                    response.setPreguntas(categoria.getPreguntasList().stream()
+                            .map(pregunta -> modelMapper.map(pregunta, PreguntaResponse.class))
+                            .collect(Collectors.toList()));
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 
     public CategoriaResponse findCategoriaById(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
-        return modelMapper.map(categoria, CategoriaResponse.class);
+        CategoriaResponse response = modelMapper.map(categoria, CategoriaResponse.class);
+        response.setPreguntas(categoria.getPreguntasList().stream()
+                .map(pregunta -> modelMapper.map(pregunta, PreguntaResponse.class))
+                .collect(Collectors.toList()));
+        return response;
     }
 
     public CategoriaResponse saveCategoria(CategoriaRequest categoriaRequest) {

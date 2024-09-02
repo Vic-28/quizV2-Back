@@ -17,31 +17,31 @@ public class PreguntaController {
 
     private final PreguntaService preguntaService;
 
-    @GetMapping
+    @GetMapping("/findAll")
     public ResponseEntity<List<PreguntaResponse>> getAllPreguntas() {
         List<PreguntaResponse> preguntas = preguntaService.findAllPreguntas();
         return ResponseEntity.ok(preguntas);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/findById/{id}")
     public ResponseEntity<PreguntaResponse> getPreguntaById(@PathVariable Long id) {
         PreguntaResponse pregunta = preguntaService.findPreguntaById(id);
         return ResponseEntity.ok(pregunta);
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<PreguntaResponse> createPregunta(@RequestBody PreguntaRequest preguntaRequest) {
         PreguntaResponse createdPregunta = preguntaService.savePregunta(preguntaRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPregunta);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<PreguntaResponse> updatePregunta(@PathVariable Long id, @RequestBody PreguntaRequest preguntaRequest) {
         PreguntaResponse updatedPregunta = preguntaService.updatePregunta(id, preguntaRequest);
         return ResponseEntity.ok(updatedPregunta);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePregunta(@PathVariable Long id) {
         String response = preguntaService.deletePregunta(id);
         if (response.equals("Pregunta eliminada")) {
