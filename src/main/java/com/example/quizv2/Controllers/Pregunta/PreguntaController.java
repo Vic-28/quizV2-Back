@@ -6,6 +6,7 @@ import com.example.quizv2.Services.Pregunta.PreguntaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,25 +30,28 @@ public class PreguntaController {
         return ResponseEntity.ok(pregunta);
     }
 
+    @GetMapping("/findPreguntasByCategoryId/{id}")
+    public ResponseEntity<List<PreguntaResponse>> findPreguntasByCategoryId(@PathVariable Long id) {
+        List<PreguntaResponse> preguntas = preguntaService.findPreguntasByCategoryId(id);
+        return ResponseEntity.ok(preguntas);
+    }
+
     @PostMapping("/save")
-    public ResponseEntity<PreguntaResponse> createPregunta(@RequestBody PreguntaRequest preguntaRequest) {
+    public ResponseEntity<PreguntaResponse> createPregunta(@RequestBody @Validated PreguntaRequest preguntaRequest) {
         PreguntaResponse createdPregunta = preguntaService.savePregunta(preguntaRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPregunta);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PreguntaResponse> updatePregunta(@PathVariable Long id, @RequestBody PreguntaRequest preguntaRequest) {
+    public ResponseEntity<PreguntaResponse> updatePregunta(@PathVariable Long id, @RequestBody @Validated PreguntaRequest preguntaRequest) {
         PreguntaResponse updatedPregunta = preguntaService.updatePregunta(id, preguntaRequest);
         return ResponseEntity.ok(updatedPregunta);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deletePregunta(@PathVariable Long id) {
-        String response = preguntaService.deletePregunta(id);
-        if (response.equals("Pregunta eliminada")) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+    public ResponseEntity<Void> deletePregunta(@PathVariable Long id) {
+        preguntaService.deletePregunta(id);
+        return ResponseEntity.noContent().build();
     }
 }
+

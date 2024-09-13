@@ -12,4 +12,5 @@ public class RespuestaResponse {
     private Long id;
     private String respuesta;
     private Boolean correcta;
+    private Long preguntaId;
 }
