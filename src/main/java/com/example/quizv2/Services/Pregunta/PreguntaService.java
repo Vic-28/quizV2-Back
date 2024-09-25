@@ -47,8 +47,17 @@ public class PreguntaService {
     public PreguntaResponse findPreguntaById(Long id) {
         Pregunta pregunta = preguntaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pregunta no encontrada"));
-        return modelMapper.map(pregunta, PreguntaResponse.class);
+        
+        List<RespuestaResponse> respuestasResponse = pregunta.getRespuestas().stream()
+                .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
+                .collect(Collectors.toList());
+
+        PreguntaResponse response = modelMapper.map(pregunta, PreguntaResponse.class);
+        response.setRespuestaResponseList(respuestasResponse);
+
+        return response;
     }
+
 
     public List<PreguntaResponse> findPreguntasByCategoryId(Long id) {
         // Busca todas las preguntas que pertenecen a la categoría con el ID proporcionado

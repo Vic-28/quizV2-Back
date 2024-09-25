@@ -16,9 +16,6 @@ public class PreguntaResponse {
 
     private Long id;
     private String pregunta;
-
-    @JsonIgnore
     private CategoriaResponse categoria;
-    @JsonIgnore
     private List<RespuestaResponse> respuestaResponseList;
 }

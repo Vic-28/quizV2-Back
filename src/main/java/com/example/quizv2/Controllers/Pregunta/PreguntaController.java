@@ -37,7 +37,7 @@ public class PreguntaController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<PreguntaResponse> createPregunta(@RequestBody @Validated PreguntaRequest preguntaRequest) {
+    public ResponseEntity<PreguntaResponse> createPregunta(@RequestBody PreguntaRequest preguntaRequest) {
         PreguntaResponse createdPregunta = preguntaService.savePregunta(preguntaRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPregunta);
     }
