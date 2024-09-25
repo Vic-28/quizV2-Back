@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,16 +17,19 @@ public class RespuestaService {
     private final RespuestaRepository respuestaRepository;
     private final ModelMapper modelMapper;
 
+
+    public static final String NOT_FOUND_ANSWER ="Respuesta no encontrada";
+
     public List<RespuestaResponse> findAllRespuestas() {
         List<Respuesta> respuestas = respuestaRepository.findAll();
         return respuestas.stream()
                 .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public RespuestaResponse findRespuestaById(Long id) {
         Respuesta respuesta = respuestaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
+                .orElseThrow(() -> new RuntimeException(NOT_FOUND_ANSWER));
         return modelMapper.map(respuesta, RespuestaResponse.class);
     }
 
@@ -39,7 +41,7 @@ public class RespuestaService {
 
     public RespuestaResponse updateRespuesta(Long id, RespuestaRequest respuestaRequest) {
         Respuesta respuesta = respuestaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
+                .orElseThrow(() -> new RuntimeException(NOT_FOUND_ANSWER));
         modelMapper.map(respuestaRequest, respuesta);
         Respuesta updatedRespuesta = respuestaRepository.save(respuesta);
         return modelMapper.map(updatedRespuesta, RespuestaResponse.class);
@@ -50,7 +52,7 @@ public class RespuestaService {
             respuestaRepository.deleteById(id);
             return "Respuesta eliminada";
         } else {
-            return "Respuesta no encontrada";
+            return NOT_FOUND_ANSWER;
         }
     }
 }

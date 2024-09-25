@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +18,8 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final ModelMapper modelMapper;
 
+    public static final String CATEGORY_NOT_FOUND ="Categoria no encontrada";
+
     public List<CategoriaResponse> findAllCategorias() {
         List<Categoria> categorias = categoriaRepository.findAll();
         return categorias.stream()
@@ -26,19 +27,19 @@ public class CategoriaService {
                     CategoriaResponse response = modelMapper.map(categoria, CategoriaResponse.class);
                     response.setPreguntas(categoria.getPreguntasList().stream()
                             .map(pregunta -> modelMapper.map(pregunta, PreguntaResponse.class))
-                            .collect(Collectors.toList()));
+                            .toList());
                     return response;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public CategoriaResponse findCategoriaById(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+                .orElseThrow(() -> new RuntimeException(CATEGORY_NOT_FOUND));
         CategoriaResponse response = modelMapper.map(categoria, CategoriaResponse.class);
         response.setPreguntas(categoria.getPreguntasList().stream()
                 .map(pregunta -> modelMapper.map(pregunta, PreguntaResponse.class))
-                .collect(Collectors.toList()));
+                .toList());
         return response;
     }
 
@@ -50,7 +51,7 @@ public class CategoriaService {
 
     public CategoriaResponse updateCategoria(Long id, CategoriaRequest categoriaRequest) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+                .orElseThrow(() -> new RuntimeException(CATEGORY_NOT_FOUND));
         modelMapper.map(categoriaRequest, categoria);
         Categoria updatedCategoria = categoriaRepository.save(categoria);
         return modelMapper.map(updatedCategoria, CategoriaResponse.class);
@@ -61,7 +62,7 @@ public class CategoriaService {
             categoriaRepository.deleteById(id);
             return "Categoria eliminada";
         } else {
-            return "Categoria no encontrada";
+            return CATEGORY_NOT_FOUND;
         }
     }
 }

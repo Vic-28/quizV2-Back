@@ -6,14 +6,12 @@ import com.example.quizv2.Models.Pregunta.PreguntaRequest;
 import com.example.quizv2.Models.Pregunta.PreguntaResponse;
 import com.example.quizv2.Models.Respuesta.Respuesta;
 import com.example.quizv2.Models.Respuesta.RespuestaResponse;
-import com.example.quizv2.Repositories.Categoria.CategoriaRepository;
 import com.example.quizv2.Repositories.Pregunta.PreguntaRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -23,6 +21,8 @@ public class PreguntaService {
     private final PreguntaRepository preguntaRepository;
     private final ModelMapper modelMapper;
 
+    public static final String PREGUNTA_NOT_FOUND= "Pergunta no encontrada";
+
     public List<PreguntaResponse> findAllPreguntas() {
         List<Pregunta> preguntas = preguntaRepository.findAll();
         return preguntas.stream()
@@ -31,7 +31,7 @@ public class PreguntaService {
 
                     response.setRespuestaResponseList(pregunta.getRespuestas().stream()
                             .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
-                            .collect(Collectors.toList()));
+                            .toList());
 
                     if (pregunta.getCategoria() != null) {
                         response.setCategoria(modelMapper.map(pregunta.getCategoria(), CategoriaResponse.class));
@@ -41,16 +41,16 @@ public class PreguntaService {
 
                     return response;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public PreguntaResponse findPreguntaById(Long id) {
         Pregunta pregunta = preguntaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pregunta no encontrada"));
+                .orElseThrow(() -> new RuntimeException(PREGUNTA_NOT_FOUND));
         
         List<RespuestaResponse> respuestasResponse = pregunta.getRespuestas().stream()
                 .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
-                .collect(Collectors.toList());
+                .toList();
 
         PreguntaResponse response = modelMapper.map(pregunta, PreguntaResponse.class);
         response.setRespuestaResponseList(respuestasResponse);
@@ -71,7 +71,7 @@ public class PreguntaService {
                     // Mapea la lista de Respuestas a RespuestaResponse
                     response.setRespuestaResponseList(pregunta.getRespuestas().stream()
                             .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
-                            .collect(Collectors.toList()));
+                            .toList());
 
                     // Mapea la categoría si no es nula
                     if (pregunta.getCategoria() != null) {
@@ -82,7 +82,7 @@ public class PreguntaService {
 
                     return response;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public PreguntaResponse savePregunta(PreguntaRequest preguntaRequest) {
@@ -102,14 +102,14 @@ public class PreguntaService {
 
         preguntaResponse.setRespuestaResponseList(savedPregunta.getRespuestas().stream()
                 .map(respuesta -> modelMapper.map(respuesta, RespuestaResponse.class))
-                .collect(Collectors.toList()));
+                .toList());
 
         return preguntaResponse;
     }
 
     public PreguntaResponse updatePregunta(Long id, PreguntaRequest preguntaRequest) {
         Pregunta pregunta = preguntaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pregunta no encontrada"));
+                .orElseThrow(() -> new RuntimeException(PREGUNTA_NOT_FOUND));
         modelMapper.map(preguntaRequest, pregunta);
         Pregunta updatedPregunta = preguntaRepository.save(pregunta);
         return modelMapper.map(updatedPregunta, PreguntaResponse.class);
@@ -120,7 +120,7 @@ public class PreguntaService {
             preguntaRepository.deleteById(id);
             return "Pregunta eliminada";
         } else {
-            return "Pregunta no encontrada";
+            return PREGUNTA_NOT_FOUND;
         }
     }
 }

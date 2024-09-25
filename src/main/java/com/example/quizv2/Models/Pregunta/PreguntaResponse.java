@@ -2,7 +2,6 @@ package com.example.quizv2.Models.Pregunta;
 
 import com.example.quizv2.Models.Categoria.CategoriaResponse;
 import com.example.quizv2.Models.Respuesta.RespuestaResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
